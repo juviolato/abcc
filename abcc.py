@@ -5,46 +5,81 @@ from tkinter import messagebox
 #import PIL.Image, PIL.ImageTk
 import base
 
-class GUI(Tk):
+class ABCC(Tk):
 
 	def __init__(self):
 		Tk.__init__(self)
 		self.title('Sistema de Trocas - ABCC')
+		self.geometry('600x400')
 		self.resizable(0,0)
 
-		self.loggedIn = False;		
+		container = Frame(self)
+		container.pack(side='top', fill=BOTH, expand=True)
+		container.grid(row=0,column=0)
+
+		self.frames = {}
+
+		for F in (StartPage, LoginPage, ArchivePage):#, SearchPage, ManagerPage):
+			frame = F(container, self)
+			self.frames[F] = frame
+			frame.grid(row=0,column=0,sticky='nsew')
+
+		self.show_frame(StartPage)
+
+	def show_frame(self, cont):
+		frame = self.frames[cont]
+		frame.tkraise()
+
+class StartPage(Frame):
+
+	def __init__(self, parent, controller):
+		Frame.__init__(self, parent)
 
 		butFrame = Frame(self)
 		butFrame.grid(row=0,column=0)
-		self.buttonQuit			= Button(butFrame, text='Sair',		 		command=self.quit			).pack(fill=BOTH, expand=1)
-		self.buttonLogin		= Button(butFrame, text='Login / Cadastro',	command=self.login			).pack(fill=BOTH, expand=1)
-		self.buttonEditArchive	= Button(butFrame, text='Editar arquivo', 	command=self.editArchive	).pack(fill=BOTH, expand=1)
-		self.buttonSearchPieces	= Button(butFrame, text='Pesquisar peças',	command=self.searchPieces	).pack(fill=BOTH, expand=1)
-		self.buttonManager 		= Button(butFrame, text='Área de gerência',	command=self.managerArea	).pack(fill=BOTH, expand=1)
+#		butFrame.pack(fill=BOTH, expand=True)
+		self.buttonQuit			= Button(butFrame, text='Sair',		 		command=self.quit)
+		self.buttonLogin		= Button(butFrame, text='Login / Cadastro',	command=lambda: controller.show_frame(LoginPage))
+		self.buttonEditArchive	= Button(butFrame, text='Arquivo', 			command=lambda: controller.show_frame(ArchivePage))
+		self.buttonSearchPieces	= Button(butFrame, text='Pesquisar peças',	command=lambda: controller.show_frame(SearchPage))
+		self.buttonManager 		= Button(butFrame, text='Área de gerência',	command=lambda: controller.show_frame(ManagerPage))
 		
-	def login(self): # estender para aceitar criacao de conta
-		cnpj = simpledialog.askstring('Login', 'Insira o seu CNPJ')
-		password = simpledialog.askstring('Login', 'Insira a sua senha')
-		General.login(cnpj, password)
-		self.loggedIn = True;
+		self.buttonQuit.pack(fill=BOTH, expand=True)
+		self.buttonLogin.pack(fill=BOTH, expand=True)
+		self.buttonEditArchive.pack(fill=BOTH, expand=True)
+		self.buttonSearchPieces.pack(fill=BOTH, expand=True)
+		self.buttonManager.pack(fill=BOTH, expand=True)
 
-	def editArchive(self):
-		if self.loggedIn:
-			print('aaa')
-			# fazer coisas aqui
-		else:
-			messagebox.showerror('Indisponível','Esta ação está disponível apenas para usuários cadastrados')
+class LoginPage(Frame):
 
-	def searchPieces(self):
-		if self.loggedIn:
-			print('aaa')
-			# fazer coisas aqui
-		else:
-			messagebox.showerror('Indisponível','Esta ação está disponível apenas para usuários cadastrados')
+	def __init__(self, parent, controller):
+		Frame.__init__(self, parent)
 
-	def managerArea(self):
-		pass
+		cnpjLabel = Label(self, text='CNPJ:')
+		cnpjLabel.grid(row=0, sticky='e')
+		self.cnpjEntry = Entry(self)
+		self.cnpjEntry.grid(row=0,column=1)
+		passwordLabel = Label(self, text='Senha:')
+		passwordLabel.grid(row=1, sticky='e')
+		self.passwordEntry = Entry(self, show='*')
+		self.passwordEntry.grid(row=1,column=1)
+
+		self.buttonLogin = Button(self, text='Realizar Login', command=self.login)
+		self.buttonLogin.grid(row=2,columnspan=2)
+
+	def login(self):
+		cnpj = self.cnpjEntry.get()
+		password = self.passwordEntry.get()
+		g.login(cnpj, password)
+
+class ArchivePage(Frame):
+
+	def __init__(self, parent, controller):
+		Frame.__init__(self, parent)
+
+		label = Label(self, text='this is archive page').pack()
 
 if __name__ == '__main__':
-	gui = GUI()
-	gui.mainloop()
+	g = base.General('institutions.xml','pieces.xml')
+	abcc = ABCC()
+	abcc.mainloop()
