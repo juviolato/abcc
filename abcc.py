@@ -67,6 +67,9 @@ class LoginPage(Frame):
 		self.buttonLogin = Button(self, text='Realizar Login', command=self.login)
 		self.buttonLogin.grid(row=2,columnspan=2)
 
+		self.buttonBack = Button(self, text='Back', command=lambda: controller.show_frame(StartPage))
+		self.buttonBack.grid(row=3,columnspan=2)
+
 	def login(self):
 		cnpj = self.cnpjEntry.get()
 		password = self.passwordEntry.get()
@@ -80,6 +83,6 @@ class ArchivePage(Frame):
 		label = Label(self, text='this is archive page').pack()
 
 if __name__ == '__main__':
-	g = base.General('institutions.xml','pieces.xml')
+	g = base.Communicator('institutions.xml','pieces.xml')
 	abcc = ABCC()
 	abcc.mainloop()

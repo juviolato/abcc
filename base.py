@@ -129,7 +129,7 @@ class LoanRequest:
         self.request_time = date.today()
 
 
-class General:
+class Communicator:
     def __init__( self, institution_storage, pieces_storage ):
         self.institution_storage_path = Utils().validateFilename( institution_storage )
         self.pieces_storage_path = Utils().validateFilename( pieces_storage )
