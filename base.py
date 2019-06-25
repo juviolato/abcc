@@ -16,7 +16,7 @@ class Piece:
             if path is None:
                 raise Exception
             else:
-                self.readFromXml( name, artist, year, path )
+                self.retrieveFromStorage( name, artist, year, path )
         else:
             self.name = name
             self.artist = artist
@@ -25,7 +25,7 @@ class Piece:
             self.owned_by = owning_institution_cnpj
             # estender para checar se existe uma instituição com esse cnpj e se a obra já existe
 
-    def saveToXml( self, path ):
+    def registerToStorage( self, path ):
         path = Utils().validateFilename( path )
         pieces = ElementTree.parse( path )
         root = pieces.getroot()
@@ -35,7 +35,7 @@ class Piece:
         pieces.write( path )
         # estender para checar se a obra já existe
 
-    def readFromXml( self, name, artist, year, path ) -> "Piece":
+    def retrieveFromStorage( self, name, artist, year, path ) -> "Piece":
         path = Utils().validateFilename( path )
         pieces = ElementTree.parse( path )
         root = pieces.getroot()
@@ -54,7 +54,7 @@ class Piece:
         print( "This piece is not currently registered" )
         raise Exception
 
-    def deleteFromXml( self, path ):
+    def deleteFromStorage( self, path ):
         path = Utils().validateFilename( path )
         pieces = ElementTree.parse( path )
         root = pieces.getroot()
@@ -74,7 +74,7 @@ class Institution:
             if path is None:
                 raise Exception
             else:
-                self.readFromXml( cnpj, access_password, path )
+                self.retrieveFromStorage( cnpj, access_password, path )
         else:
             self.name = name
             self.cnpj = cnpj
@@ -84,7 +84,7 @@ class Institution:
             self.access_password = access_password
             # estender para checar se a instituição já existe
 
-    def saveToXml( self, path ):
+    def registerToStorage( self, path ):
         path = Utils().validateFilename( path )
         institutions = ElementTree.parse( path )
         root = institutions.getroot()
@@ -94,7 +94,7 @@ class Institution:
         institutions.write( path )
         # estender para checar se a instituição já existe
 
-    def readFromXml( self, cnpj, password, path ) -> "Institution":
+    def retrieveFromStorage( self, cnpj, password, path ) -> "Institution":
         path = Utils().validateFilename( path )
         institutions = ElementTree.parse( path )
         root = institutions.getroot()
@@ -109,7 +109,7 @@ class Institution:
                 return self
         raise Exception
 
-    def deleteFromXml( self, path ):
+    def deleteFromStorage( self, path ):
         path = Utils().validateFilename( path )
         institutions = ElementTree.parse( path )
         root = institutions.getroot()
@@ -135,7 +135,7 @@ class Communicator:
         self.pieces_storage_path = Utils().validateFilename( pieces_storage )
         self.initializeStorages()
 
-    def initializeStorages( self ):
+    def initializeStorages(self):
         institution = ElementTree.Element( 'data' )
         storage = open( self.institution_storage_path, "wb" )
         storage.write( ElementTree.tostring( institution ) )
@@ -145,22 +145,37 @@ class Communicator:
 
     def registerInstitution( self, institution_name, cnpj, address, phone_number, email, access_password ):
         new_institution = Institution( cnpj, access_password, address, phone_number, email, institution_name )
-        new_institution.saveToXml( self.institution_storage_path )
+        new_institution.registerToStorage( self.institution_storage_path )
+
+#	def updateInstitution(self):
+#		pass
 
     def removeInstitution( self, institution_cnpj, password ):
         institution = Institution( institution_cnpj, password, path=self.institution_storage_path )
-        institution.deleteFromXml( self.institution_storage_path )
+        institution.deleteFromStorage( self.institution_storage_path )
 
     def registerPiece( self, name, artist, state, year, owning_institution_cnpj ):
         new_piece = Piece( name, artist, year, state, owning_institution_cnpj )
-        new_piece.saveToXml( self.pieces_storage_path )
+        new_piece.registerToStorage( self.pieces_storage_path )
+
+#	def updatePiece(self):
+#		pass
 
     def removePiece( self, name, artist, year ):
         piece = Piece( name, artist, year, path=self.pieces_storage_path )
-        piece.deleteFromXml( self.pieces_storage_path )
+        piece.deleteFromStorage( self.pieces_storage_path )
 
-    def requestLoan( self, loaning_institution: Institution, lending_institution: Institution, piece: Piece, from_date, to_date ):
+    def createLoanRequest( self, loaning_institution: Institution, lending_institution: Institution, piece: Piece, from_date, to_date ):
         new_loan_request = LoanRequest( loaning_institution, lending_institution, piece, from_date, to_date )
+
+#	def removeLoanRequest(self):
+#		pass
+
+#	def acceptLoanRequest(self):
+#		pass
+
+#	def refuseLoanRequest(self):
+#		pass
 
     def login( self, institution_cnpj, password ):
         new_institution = Institution( institution_cnpj, password, path=self.institution_storage_path )
