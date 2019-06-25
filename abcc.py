@@ -8,8 +8,8 @@ class ABCC(Tk):
 
 	def __init__(self):
 		Tk.__init__(self)
-		self.title('Sistema de Trocas - ABCC')
-		self.geometry('600x400')
+		self.title('Sistema ABCC')
+#		self.geometry('600x400')
 		self.resizable(0,0)
 
 		container = Frame(self)
