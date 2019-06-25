@@ -75,7 +75,7 @@ class LoginPage(Frame):
 		cnpj = self.cnpjEntry.get()
 		password = self.passwordEntry.get()
 		g.login(cnpj, password)
-		messagebox.showdialog('LOGIN REALIZADO','O login foi realizado com sucesso')
+		messagebox.showinfo('LOGIN REALIZADO','O login foi realizado com sucesso')
 
 class RegisterPage(Frame):
 
@@ -124,7 +124,7 @@ class RegisterPage(Frame):
 		telephone = self.telephoneEntry.get()
 		email = self.emailEntry.get()
 		g.registerInstitution(name, cnpj, address, telephone, email, password)
-		messagebox.showdialog('REGISTRO CONCLUÍDO','O registro da instituição foi feito com sucesso')
+		messagebox.showinfo('REGISTRO CONCLUÍDO','O registro da instituição foi feito com sucesso')
 
 class CollectionPage(Frame):
 
@@ -157,6 +157,6 @@ class ManagerPage(Frame):
 		self.buttonBack.pack()
 
 if __name__ == '__main__':
-	g = base.Communicator('institutions.xml','pieces.xml')
+	g = base.Communicator()
 	abcc = ABCC()
 	abcc.mainloop()
